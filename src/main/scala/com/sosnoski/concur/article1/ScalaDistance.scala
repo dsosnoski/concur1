@@ -139,8 +139,8 @@ class Matcher(words: Array[String]) {
   }
 }
 
-/** Controls collection of matchers and merges results. */
-class ScalaDistance(words: Array[String], size: Int) extends TimingTestBase {
+/** Controls collection of matchers and merges results (alternative 1). */
+class ParallelCollectionDistance(words: Array[String], size: Int) extends TimingTestBase {
 
   val matchers = words.grouped(size).map(l => new Matcher(l)).toList
   
@@ -149,19 +149,39 @@ class ScalaDistance(words: Array[String], size: Int) extends TimingTestBase {
   def blockSize = size
 
   /** Find best result across all matchers, using parallel collection. */
-  def bestMatch1(target: String) = {
+  def bestMatch(target: String) = {
     matchers.par.map(m => m.bestMatch(target)).
       foldLeft(DistancePair.worstMatch)((a, m) => DistancePair.best(a, m))
   }
+}
+
+/** Controls collection of matchers and merges results (alternative 2). */
+class FutureFoldDistance(words: Array[String], size: Int) extends TimingTestBase {
+
+  val matchers = words.grouped(size).map(l => new Matcher(l)).toList
+  
+  def shutdown = {}
+  
+  def blockSize = size
 
   /** Find best result across all matchers, using Future.fold helper. */
-  def bestMatch2(target: String) = {
+  def bestMatch(target: String) = {
     import ExecutionContext.Implicits.global
     val futures = matchers.map(m => future { m.bestMatch(target) })
     val combined = Future.fold(futures)(DistancePair.worstMatch)((a, v) =>
       DistancePair.best(a, v))
     Await.result(combined, Duration.Inf)
   }
+}
+
+/** Controls collection of matchers and merges results (alternative 3). */
+class DirectBlockingDistance(words: Array[String], size: Int) extends TimingTestBase {
+
+  val matchers = words.grouped(size).map(l => new Matcher(l)).toList
+  
+  def shutdown = {}
+  
+  def blockSize = size
 
   /** Find best result across all matchers, using direct blocking waits. */
   def bestMatch(target: String) = {

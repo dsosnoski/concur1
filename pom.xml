@@ -57,20 +57,7 @@
             </javacArgs>
             <launchers>
               <launcher>
-                <id>scala</id>
-                <mainClass>com.sosnoski.concur.article1.TimedTest</mainClass>
-                <args>
-                  <arg>data/words.txt</arg>
-                  <arg>data/misspells.txt</arg>
-                  <arg>com.sosnoski.concur.article1.ScalaDistance</arg>
-                </args>
-                <jvmArgs>
-                  <jvmArg>-Xms256m</jvmArg>
-                  <jvmArg>-Xmx256m</jvmArg>
-                </jvmArgs>
-              </launcher>
-              <launcher>
-                <id>pool</id>
+                <id>basepool</id>
                 <mainClass>com.sosnoski.concur.article1.TimedTest</mainClass>
                 <args>
                   <arg>data/words.txt</arg>
@@ -89,6 +76,45 @@
                   <arg>data/words.txt</arg>
                   <arg>data/misspells.txt</arg>
                   <arg>com.sosnoski.concur.article1.ForkJoinDistance</arg>
+                </args>
+                <jvmArgs>
+                  <jvmArg>-Xms256m</jvmArg>
+                  <jvmArg>-Xmx256m</jvmArg>
+                </jvmArgs>
+              </launcher>
+              <launcher>
+                <id>parcol</id>
+                <mainClass>com.sosnoski.concur.article1.TimedTest</mainClass>
+                <args>
+                  <arg>data/words.txt</arg>
+                  <arg>data/misspells.txt</arg>
+                  <arg>com.sosnoski.concur.article1.ParallelCollectionDistance</arg>
+                </args>
+                <jvmArgs>
+                  <jvmArg>-Xms256m</jvmArg>
+                  <jvmArg>-Xmx256m</jvmArg>
+                </jvmArgs>
+              </launcher>
+              <launcher>
+                <id>futurefold</id>
+                <mainClass>com.sosnoski.concur.article1.TimedTest</mainClass>
+                <args>
+                  <arg>data/words.txt</arg>
+                  <arg>data/misspells.txt</arg>
+                  <arg>com.sosnoski.concur.article1.FutureFoldDistance</arg>
+                </args>
+                <jvmArgs>
+                  <jvmArg>-Xms256m</jvmArg>
+                  <jvmArg>-Xmx256m</jvmArg>
+                </jvmArgs>
+              </launcher>
+              <launcher>
+                <id>dirblock</id>
+                <mainClass>com.sosnoski.concur.article1.TimedTest</mainClass>
+                <args>
+                  <arg>data/words.txt</arg>
+                  <arg>data/misspells.txt</arg>
+                  <arg>com.sosnoski.concur.article1.DirectBlockingDistance</arg>
                 </args>
                 <jvmArgs>
                   <jvmArg>-Xms256m</jvmArg>
