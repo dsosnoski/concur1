@@ -30,8 +30,9 @@ To run timing tests of the two Java and three Scala edit distance code variation
 2. `forkjoin` - Java `ForkJoinPool` with recursive task splitting
 (`ForkJoinDistance` class)
 3. `parcol` - Scala using parallel collection (`ParallelCollectionDistance` class)
-4. `futurefold` - Scala using default `ExecutionContext` with `Future.fold` helper method (`FutureFoldDistance` class)
-5. `dirblock` - Scala using default `ExecutionContext` with (`DirectBlockingDistance` class)
+4. `dirblock` - Scala using default `ExecutionContext` with (`DirectBlockingDistance` class)
+5. `futurefold` - Scala using default `ExecutionContext` with `Future.fold` helper method (`FutureFoldDistance` class)
+6. `recursplit` - Scala using Java `ForkJoinPool` with recursive splitting of futures (`RecursiveSplitDistance` class)
 
 and {block size} is the number of known words to include in each calculation task.
 

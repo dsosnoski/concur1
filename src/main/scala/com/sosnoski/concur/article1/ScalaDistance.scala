@@ -14,6 +14,7 @@ package com.sosnoski.concur.article1
 import scala.annotation.tailrec
 import scala.concurrent._
 import scala.concurrent.duration.Duration
+import java.util.concurrent.ForkJoinPool
 
 /** Matcher for array of words. */
 class Matcher(words: Array[String]) {
@@ -119,7 +120,7 @@ class Matcher(words: Array[String]) {
     }
 
     /** Scan all known words in range to find best match.
-      *  
+      *
       * @param index next word index
       * @param bestDist minimum distance found so far
       * @param bestMatch unique word at minimum distance, or None if not unique
@@ -143,9 +144,9 @@ class Matcher(words: Array[String]) {
 class ParallelCollectionDistance(words: Array[String], size: Int) extends TimingTestBase {
 
   val matchers = words.grouped(size).map(l => new Matcher(l)).toList
-  
+
   def shutdown = {}
-  
+
   def blockSize = size
 
   /** Find best result across all matchers, using parallel collection. */
@@ -159,9 +160,9 @@ class ParallelCollectionDistance(words: Array[String], size: Int) extends Timing
 class FutureFoldDistance(words: Array[String], size: Int) extends TimingTestBase {
 
   val matchers = words.grouped(size).map(l => new Matcher(l)).toList
-  
+
   def shutdown = {}
-  
+
   def blockSize = size
 
   /** Find best result across all matchers, using Future.fold helper. */
@@ -178,16 +179,53 @@ class FutureFoldDistance(words: Array[String], size: Int) extends TimingTestBase
 class DirectBlockingDistance(words: Array[String], size: Int) extends TimingTestBase {
 
   val matchers = words.grouped(size).map(l => new Matcher(l)).toList
-  
+
   def shutdown = {}
-  
+
   def blockSize = size
 
   /** Find best result across all matchers, using direct blocking waits. */
   def bestMatch(target: String) = {
     import ExecutionContext.Implicits.global
+
     val futures = matchers.map(m => future { m.bestMatch(target) })
     futures.foldLeft(DistancePair.worstMatch)((a, v) =>
       DistancePair.best(a, Await.result(v, Duration.Inf)))
+  }
+}
+
+/** Controls collection of matchers and merges results, using Java ForkJoin pool (alternative 4). */
+class RecursiveSplitDistance(words: Array[String], size: Int) extends TimingTestBase {
+  
+  implicit val executionContext = ExecutionContext.fromExecutor(new ForkJoinPool)
+
+  val matchers = words.grouped(size).map(l => new Matcher(l)).toArray
+
+  def shutdown = {}
+
+  def blockSize = size
+
+  /** Find best result across all matchers, splitting range recursively to emulate Java recursive tasks. */
+  def bestMatch(target: String) = {
+    def evaluateRange(start: Int, length: Int): Future[DistancePair] = {
+      if (length == 1) future { matchers(start).bestMatch(target) }
+      else {
+        val promise = Promise[DistancePair]
+        val half = length / 2
+        val low = future { evaluateRange(start, half) }
+        val high = future { evaluateRange(start + half, length - half) }
+        low.onSuccess {
+          case a => high.onSuccess {
+            case b => a.onSuccess {
+              case x => b.onSuccess {
+                case y => promise.success(DistancePair.best(x, y))
+              }
+            }
+          }
+        }
+        promise.future
+      }
+    }
+    Await.result(evaluateRange(0, matchers.length), Duration.Inf)
   }
 }

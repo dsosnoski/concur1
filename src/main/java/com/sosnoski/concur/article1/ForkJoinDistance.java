@@ -146,7 +146,8 @@ public class ForkJoinDistance extends TimingTestBase
                     single = false;
                 }
             }
-            return new DistancePair(bestDistance, single ? matchWords[bestIndex] : null);
+            return single ? new DistancePair(bestDistance, knownWords[bestIndex]) :
+            	new DistancePair(bestDistance);
         }
         
     }

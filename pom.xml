@@ -96,6 +96,19 @@
                 </jvmArgs>
               </launcher>
               <launcher>
+                <id>dirblock</id>
+                <mainClass>com.sosnoski.concur.article1.TimedTest</mainClass>
+                <args>
+                  <arg>data/words.txt</arg>
+                  <arg>data/misspells.txt</arg>
+                  <arg>com.sosnoski.concur.article1.DirectBlockingDistance</arg>
+                </args>
+                <jvmArgs>
+                  <jvmArg>-Xms256m</jvmArg>
+                  <jvmArg>-Xmx256m</jvmArg>
+                </jvmArgs>
+              </launcher>
+              <launcher>
                 <id>futurefold</id>
                 <mainClass>com.sosnoski.concur.article1.TimedTest</mainClass>
                 <args>
@@ -109,12 +122,12 @@
                 </jvmArgs>
               </launcher>
               <launcher>
-                <id>dirblock</id>
+                <id>recursplit</id>
                 <mainClass>com.sosnoski.concur.article1.TimedTest</mainClass>
                 <args>
                   <arg>data/words.txt</arg>
                   <arg>data/misspells.txt</arg>
-                  <arg>com.sosnoski.concur.article1.DirectBlockingDistance</arg>
+                  <arg>com.sosnoski.concur.article1.RecursiveSplitDistance</arg>
                 </args>
                 <jvmArgs>
                   <jvmArg>-Xms256m</jvmArg>
