@@ -12,35 +12,37 @@
 package com.sosnoski.concur.article1
 
 abstract class TimingTestBase {
-  
+
   def bestMatch(target: String): DistancePair
-  
+
   def shutdown: Unit
-  
+
   def blockSize: Int
 
   def runTest(words: Array[String], pairs: List[(String, String)]) = {
+
+    def timePass(): (Int, Long) = {
+      val start = System.currentTimeMillis
+      val found = pairs.foldLeft(0)((count, pair) => bestMatch(pair._1) match {
+          case DistancePair(_, Some(pair._2)) => count + 1
+          case _ => count
+      })
+      (found, System.currentTimeMillis() - start)
+    }
+    
     val count = pairs.size
-    var high = 0
-    for (i <- 0 until 10) {
+    val high = (0 until 10).foldLeft(0)((high, i) => {
       if (i > 0) {
         println("Pausing for JVM to settle")
         Thread.sleep(3000)
       }
-      val start = System.currentTimeMillis
-      var found = 0
-      pairs.foreach(pair => {
-        bestMatch(pair._1) match {
-          case DistancePair(_, Some(pair._2)) => found = found + 1
-          case _ =>
-        }
-      })
-      val time = System.currentTimeMillis() - start
+      val (found, time) = timePass()
       val rate = count * 1000 / time.intValue
       println(count + " words took " + time + " ms. (" + found + " results matched) for rate " + rate)
-      if (high < rate) high = rate
-    }
+      if (high < rate) rate else high
+    })
+    
     println("Completed test for class " + this.getClass.getSimpleName + " with block size " +
-        blockSize + ", maximum rate " + high + " words / second")
+      blockSize + ", maximum rate " + high + " words / second")
   }
 }

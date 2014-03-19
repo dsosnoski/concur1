@@ -49,6 +49,7 @@
             <scalaVersion>${scala.version}</scalaVersion>
             <recompileMode>incremental</recompileMode>
             <args>
+              <arg>-optimize</arg>
               <arg>-target:jvm-1.7</arg>
             </args>
             <javacArgs>
@@ -56,6 +57,8 @@
               <javacArg>-target</javacArg><javacArg>1.7</javacArg>
             </javacArgs>
             <launchers>
+            
+              <!-- Launchers for the edit distance timing tests -->
               <launcher>
                 <id>basepool</id>
                 <mainClass>com.sosnoski.concur.article1.TimedTest</mainClass>
@@ -134,6 +137,17 @@
                   <jvmArg>-Xmx256m</jvmArg>
                 </jvmArgs>
               </launcher>
+              
+              <!-- ClosureTest -->
+              <launcher>
+                <id>closures</id>
+                <mainClass>com.sosnoski.concur.article1.ClosureTest</mainClass>
+                <jvmArgs>
+                  <jvmArg>-Xms256m</jvmArg>
+                  <jvmArg>-Xmx256m</jvmArg>
+                </jvmArgs>
+              </launcher>
+              
             </launchers>
           </configuration>
         </plugin>
@@ -170,18 +184,18 @@
           </execution>
         </executions>
       </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <!-- enable scalatest -->
       <plugin>
         <groupId>org.scalatest</groupId>

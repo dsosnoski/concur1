@@ -13,8 +13,6 @@ package com.sosnoski.concur.article1;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.concurrent.ForkJoinPool;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,35 +22,30 @@ import org.junit.Test;
  */
 public class ForkJoinTest
 {
-    private ForkJoinPool pool;
+    private ForkJoinDistance impl;
     
     @Before
     public void setUp() {
-        pool = new ForkJoinPool();
+        impl = new ForkJoinDistance(TestWords.TEST_WORDS, 100);
     }
     
     @After
     public void tearDown() throws Exception {
-        pool.shutdown();
+        impl.shutdown();
     }
     
-/*    @Test
+    @Test
     public void testList() {
-        assertEquals(new DistancePair(0, "teachers"), runTest("teachers"));
-        assertEquals(new DistancePair(1, "teachers"), runTest("terchers"));
-        assertEquals(new DistancePair(1, "unsuccessful"), runTest("unsuccesful"));
-        assertEquals(new DistancePair(4, "turntable"), runTest("adresable"));
-        assertEquals(new DistancePair(2), runTest("blovd"));
-        assertEquals(new DistancePair(2, "million"), runTest("minion"));
-        assertEquals(new DistancePair(4, "million"), runTest("comision"));
-        assertEquals(new DistancePair(1, "defended"), runTest("defnded"));
-        assertEquals(new DistancePair(1, "valued"), runTest("value"));
-        assertEquals(new DistancePair(1, "care"), runTest("cars"));
-        assertEquals(new DistancePair(2, "article's"), runTest("articls"));
+        assertEquals(new DistancePair(0, "teachers"), impl.bestMatch("teachers"));
+        assertEquals(new DistancePair(1, "teachers"), impl.bestMatch("terchers"));
+        assertEquals(new DistancePair(1, "unsuccessful"), impl.bestMatch("unsuccesful"));
+        assertEquals(new DistancePair(4, "turntable"), impl.bestMatch("adresable"));
+        assertEquals(new DistancePair(2), impl.bestMatch("blovd"));
+        assertEquals(new DistancePair(2, "million"), impl.bestMatch("minion"));
+        assertEquals(new DistancePair(4, "million"), impl.bestMatch("comision"));
+        assertEquals(new DistancePair(1, "defended"), impl.bestMatch("defnded"));
+        assertEquals(new DistancePair(1, "valued"), impl.bestMatch("value"));
+        assertEquals(new DistancePair(1, "care"), impl.bestMatch("cars"));
+        assertEquals(new DistancePair(2, "article's"), impl.bestMatch("articls"));
     }
-    
-    private DistancePair runTest(String word) {
-        ThreadPoolDistance task = new ThreadPoolDistance(TestWords.TEST_WORDS, 100);
-        return pool.invoke(task);
-    }   */
 }
