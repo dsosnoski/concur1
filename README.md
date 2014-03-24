@@ -22,7 +22,7 @@ pauses between passes to let the JVM settle. It prints the elapsed time and numb
 found on each pass, along with the processing rate in terms of misspelled words per second. At the end
 of the 10 passes it ends with a summary of the test case and the best time from any pass.
 
-To run timing tests of the two Java and three Scala edit distance code variations use
+To run timing tests of the two Java and four Scala edit distance code variations use
 `mvn scala:run -Dlauncher={name} -DaddArgs={block size}`, where {name} selects the test code:
 
 1. `basepool` - Simple Java thread pool, with thread count set to number of available cores
@@ -37,3 +37,14 @@ To run timing tests of the two Java and three Scala edit distance code variation
 and {block size} is the number of known words to include in each calculation task.
 
 You can import the project into ScalaIDE with the standard Maven project import handling.
+
+## Closure performance code
+
+Besides the code discussed in the article, I've added ClosureTest.scala with some microbenchmark code
+for checking performance of Scala closures. This didn't really show much of interest, but if you want
+to try it out you can use the Maven launcher target `closures` to run it.
+
+I also added a third variation of the Scala `editDistance` method, this one using a local `iterate` method
+instead of the `Range.foreach` used by the idiomatic Scala code (as the translation of the `for (i <- 0 to x)`
+constructs). On the Oracle Java 7 64-bit JVM this variation delivers about 85% of the performance of the
+tail-recursion code (vs. about 45% for the idiomatic Scala).
