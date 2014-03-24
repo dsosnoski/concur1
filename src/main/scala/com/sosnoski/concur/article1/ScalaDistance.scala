@@ -45,7 +45,7 @@ class Matcher(words: Array[String]) {
       val length = word.length
 
       @tailrec
-      def distanceByRow(row: Int, r0: Array[Int], r1: Array[Int]): Int = {
+      def distanceByRow(row: Int, r0: Array[Int], r1: Array[Int]): Int =
         if (row >= length) r0(limit)
         else {
 
@@ -54,19 +54,17 @@ class Matcher(words: Array[String]) {
 
           // use formula recursively to fill in the rest of the row
           @tailrec
-          def distanceByColumn(col: Int): Unit = {
+          def distanceByColumn(col: Int): Unit =
             if (col < limit) {
               val cost = if (word(row) == targetText(col)) 0 else 1
               r1(col + 1) = min(r1(col) + 1, r0(col + 1) + 1, r0(col) + cost)
               distanceByColumn(col + 1)
             }
-          }
           distanceByColumn(0)
 
           // recurse with arrays swapped for next row
           distanceByRow(row + 1, r1, r0)
         }
-      }
 
       // initialize v0 (prior row of distances) as edit distance for empty 'word'
       @tailrec
@@ -94,7 +92,7 @@ class Matcher(words: Array[String]) {
       val length = word.length
 
       @tailrec
-      def distanceByRow(rnum: Int, r0: Array[Int], r1: Array[Int]): Int = {
+      def distanceByRow(rnum: Int, r0: Array[Int], r1: Array[Int]): Int =
         if (rnum >= length) r0(limit)
         else {
 
@@ -104,16 +102,61 @@ class Matcher(words: Array[String]) {
           // use formula to fill in the rest of the row
           for (j <- 0 until limit) {
             val cost = if (word(rnum) == targetText(j)) 0 else 1
-            r1(j + 1) = min(r1(j) + 1, r0(j + 1) + 1, r0(j) + cost);
+            r1(j + 1) = min(r1(j) + 1, r0(j + 1) + 1, r0(j) + cost)
           }
 
           // recurse with arrays swapped for next row
           distanceByRow(rnum + 1, r1, r0)
         }
-      }
 
       // initialize v0 (prior row of distances) as edit distance for empty 'word'
       for (i <- 0 to limit) v0(i) = i
+
+      // recursively process rows matching characters in word being compared to find best
+      distanceByRow(0, v0, v1)
+    }
+
+    /** Calculate edit distance from targetText to known word, with local replacement for Range.foreach.
+      *
+      * @param word known word
+      * @param v0 int array of length targetText.length + 1
+      * @param v1 int array of length targetText.length + 1
+      * @return distance
+      */
+    def editDistance2(word: String, v0: Array[Int], v1: Array[Int]) = {
+
+      val length = word.length
+
+      def iterate(count: Int, body: Int => Unit) {
+        @tailrec
+        def iterater(i: Int): Unit =
+          if (i < count) {
+            body(i)
+            iterater(i + 1)
+          }
+        iterater(0)
+      }
+
+      @tailrec
+      def distanceByRow(rnum: Int, r0: Array[Int], r1: Array[Int]): Int =
+        if (rnum >= length) r0(limit)
+        else {
+
+          // first element of r1 = delete (i+1) chars from target to match empty 'word'
+          r1(0) = rnum + 1
+
+          // use formula to fill in the rest of the row
+          iterate(limit, i => {
+            val cost = if (word(rnum) == targetText(i)) 0 else 1
+            r1(i + 1) = min(r1(i) + 1, r0(i + 1) + 1, r0(i) + cost)
+          })
+
+          // recurse with arrays swapped for next row
+          distanceByRow(rnum + 1, r1, r0)
+        }
+
+      // initialize v0 (prior row of distances) as edit distance for empty 'word'
+      iterate(limit + 1, i => v0(i) = i)
 
       // recursively process rows matching characters in word being compared to find best
       distanceByRow(0, v0, v1)
@@ -196,7 +239,7 @@ class DirectBlockingDistance(words: Array[String], size: Int) extends TimingTest
 
 /** Controls collection of matchers and merges results, using Java ForkJoin pool (alternative 4). */
 class RecursiveSplitDistance(words: Array[String], size: Int) extends TimingTestBase {
-  
+
   implicit val executionContext = ExecutionContext.fromExecutor(new ForkJoinPool)
 
   val matchers = words.grouped(size).map(l => new Matcher(l)).toArray
@@ -207,7 +250,7 @@ class RecursiveSplitDistance(words: Array[String], size: Int) extends TimingTest
 
   /** Find best result across all matchers, splitting range recursively to emulate Java recursive tasks. */
   def bestMatch(target: String) = {
-    def evaluateRange(start: Int, length: Int): Future[DistancePair] = {
+    def evaluateRange(start: Int, length: Int): Future[DistancePair] =
       if (length == 1) future { matchers(start).bestMatch(target) }
       else {
         val promise = Promise[DistancePair]
@@ -225,7 +268,6 @@ class RecursiveSplitDistance(words: Array[String], size: Int) extends TimingTest
         }
         promise.future
       }
-    }
     Await.result(evaluateRange(0, matchers.length), Duration.Inf)
   }
 }
