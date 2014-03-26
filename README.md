@@ -1,7 +1,8 @@
 concur1
 ============
 
-This gives sample Java and Scala code for the first article in my JVM Concurrency series on IBM
+This gives sample Java and Scala code for the
+[first article in my JVM Concurrency series](http://www.ibm.com/developerworks/library/j-jvmc1/index.html) on IBM
 developerWorks. The project uses a Maven build, so just do the usual `mvn clean install` to get
 everything to a working state. The code is all in the `com.sosnoski.concur.article1` package, but
 is split between *main/java* and *main/scala* trees. The core code, including the test launcher
@@ -38,7 +39,7 @@ and {block size} is the number of known words to include in each calculation tas
 
 You can import the project into ScalaIDE with the standard Maven project import handling.
 
-## Closure performance code
+### Closure performance code
 
 Besides the code discussed in the article, I've added ClosureTest.scala with some microbenchmark code
 for checking performance of Scala closures. This didn't really show much of interest, but if you want
