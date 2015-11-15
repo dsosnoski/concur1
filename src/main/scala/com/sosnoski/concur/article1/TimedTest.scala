@@ -14,7 +14,7 @@ package com.sosnoski.concur.article1
 import scala.io.Source
 
 /** Test application runner. The main() method takes command line parameters giving the details of the
-  * test to be executed. The actual test classes must be subclasses of TimedTestBase.
+  * test to be executed. The actual test classes must be subclasses of TimingTestBase.
   */
 object TimedTest {
 
