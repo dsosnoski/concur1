@@ -21,7 +21,7 @@ object Futures extends App {
   import ExecutionContext.Implicits.global
   
   val lastInteger = new AtomicInteger
-  def futureInt() = future {
+  def futureInt() = Future {
     Thread sleep 2000
     lastInteger incrementAndGet
   }
